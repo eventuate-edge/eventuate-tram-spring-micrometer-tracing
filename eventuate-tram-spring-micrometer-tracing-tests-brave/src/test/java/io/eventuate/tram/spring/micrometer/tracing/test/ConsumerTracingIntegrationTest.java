@@ -5,6 +5,7 @@ import io.eventuate.tram.spring.micrometer.tracing.ObservationHelper;
 import io.eventuate.tram.spring.micrometer.tracing.TramObservationDocumentation;
 import io.eventuate.tram.spring.micrometer.tracing.consumer.ObservationMessageConsumerDecorator;
 import io.eventuate.util.test.async.Eventually;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -24,8 +25,6 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.web.client.RestTemplate;
 import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
 import java.util.List;
@@ -38,7 +37,6 @@ import static org.assertj.core.api.Assertions.assertThat;
                 "management.tracing.enabled=true",
                 "management.tracing.propagation.type=B3"
         })
-@Testcontainers
 public class ConsumerTracingIntegrationTest {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
@@ -60,7 +58,7 @@ public class ConsumerTracingIntegrationTest {
     @Autowired
     private TestConsumer testConsumer;
 
-    @Value("${management.zipkin.tracing.endpoint}")
+    @Value("${management.tracing.export.zipkin.endpoint}")
     private String zipkinEndpoint;
 
     @LocalServerPort
@@ -69,13 +67,17 @@ public class ConsumerTracingIntegrationTest {
     @Autowired
     private RestTemplate restTemplate;
 
-    @Container
     static final GenericContainer<?> zipkin = new GenericContainer<>(DockerImageName.parse("openzipkin/zipkin:2.23"))
             .withExposedPorts(9411);
 
+    @BeforeAll
+    public static void startContainer() {
+        zipkin.start();
+    }
+
     @DynamicPropertySource
     static void zipkinProperties(DynamicPropertyRegistry registry) {
-        registry.add("management.zipkin.tracing.endpoint",
+        registry.add("management.tracing.export.zipkin.endpoint",
                 () -> String.format("http://%s:%s/api/v2/spans", zipkin.getHost(), zipkin.getFirstMappedPort()));
         // Override Spring Boot test defaults that disable tracing
         registry.add("management.tracing.enabled", () -> "true");

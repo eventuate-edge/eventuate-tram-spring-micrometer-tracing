@@ -1,7 +1,6 @@
 package io.eventuate.tram.spring.micrometer.tracing.test;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import io.eventuate.tram.messaging.common.Message;
 import io.eventuate.tram.messaging.producer.MessageBuilder;
 import io.eventuate.tram.messaging.producer.MessageProducer;
@@ -20,12 +19,12 @@ public class TestController {
     private MessageProducer messageProducer;
 
     @Autowired
-    private ObjectMapper objectMapper;
+    private JsonMapper jsonMapper;
 
     @PostMapping(path = "/send/{id}")
-    public String sendMessage(@RequestBody TestMessage testMessage, @PathVariable("id") String id) throws JsonProcessingException {
+    public String sendMessage(@RequestBody TestMessage testMessage, @PathVariable("id") String id) {
         Message message = MessageBuilder
-                .withPayload(objectMapper.writeValueAsString(testMessage))
+                .withPayload(jsonMapper.writeValueAsString(testMessage))
                 .build();
         messageProducer.send(TEST_CHANNEL, message);
         return message.getId();

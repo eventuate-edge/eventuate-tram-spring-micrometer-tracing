@@ -11,7 +11,7 @@ import zipkin2.reporter.urlconnection.URLConnectionSender;
 public class TestTracingConfiguration {
 
     @Bean
-    public SpanHandler zipkinSpanHandler(@Value("${management.zipkin.tracing.endpoint}") String endpoint) {
+    public SpanHandler zipkinSpanHandler(@Value("${management.tracing.export.zipkin.endpoint}") String endpoint) {
         return AsyncZipkinSpanHandler.create(URLConnectionSender.create(endpoint));
     }
 }

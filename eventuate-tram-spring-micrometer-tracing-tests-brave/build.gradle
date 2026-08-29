@@ -6,19 +6,20 @@ dependencies {
 
     // Brave bridge for Zipkin tests
     testImplementation "io.micrometer:micrometer-tracing-bridge-brave"
-    testImplementation "io.zipkin.brave:brave"
-    testImplementation "io.zipkin.reporter2:zipkin-reporter-brave"
-    testImplementation "io.zipkin.reporter2:zipkin-sender-urlconnection"
+    testImplementation "io.zipkin.brave:brave:$braveVersion"
+    testImplementation "io.zipkin.reporter2:zipkin-reporter-brave:$zipkinReporterVersion"
+    testImplementation "io.zipkin.reporter2:zipkin-sender-urlconnection:$zipkinReporterVersion"
 
     testRuntimeOnly "org.junit.platform:junit-platform-launcher"
-    testImplementation "org.springframework.boot:spring-boot-starter-web"
-    testImplementation "org.springframework.boot:spring-boot-starter-test"
-    testImplementation "org.springframework.boot:spring-boot-starter-actuator"
+    testImplementation "org.springframework.boot:spring-boot-starter-webmvc:$springBootVersion"
+    testImplementation "org.springframework.boot:spring-boot-starter-webmvc-test:$springBootVersion"
+    testImplementation "org.springframework.boot:spring-boot-micrometer-tracing:$springBootVersion"
+    testImplementation "org.springframework.boot:spring-boot-micrometer-tracing-brave:$springBootVersion"
+    testImplementation "org.springframework.boot:spring-boot-starter-zipkin:$springBootVersion"
 
     testImplementation "io.eventuate.util:eventuate-util-test:$eventuateUtilVersion"
 
     testImplementation "org.testcontainers:testcontainers:$testContainersVersion"
-    testImplementation "org.testcontainers:junit-jupiter:$testContainersVersion"
 
-    testImplementation "com.fasterxml.jackson.core:jackson-databind"
+    testImplementation "tools.jackson.core:jackson-databind:$jacksonVersion"
 }

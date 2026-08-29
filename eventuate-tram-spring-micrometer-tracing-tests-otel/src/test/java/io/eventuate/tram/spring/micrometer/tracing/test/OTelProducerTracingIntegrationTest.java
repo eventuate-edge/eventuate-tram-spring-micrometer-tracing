@@ -3,6 +3,7 @@ package io.eventuate.tram.spring.micrometer.tracing.test;
 import io.eventuate.tram.spring.inmemory.TramInMemoryConfiguration;
 import io.eventuate.tram.spring.micrometer.tracing.TramObservationDocumentation;
 import io.eventuate.util.test.async.Eventually;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -20,8 +21,6 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.web.client.RestTemplate;
 import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
 import java.util.List;
@@ -30,7 +29,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(classes = OTelProducerTracingIntegrationTest.TestConfiguration.class,
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Testcontainers
 public class OTelProducerTracingIntegrationTest {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
@@ -56,15 +54,19 @@ public class OTelProducerTracingIntegrationTest {
     private RestTemplate restTemplate;
 
     // Jaeger with OTLP endpoint
-    @Container
     static final GenericContainer<?> jaeger = new GenericContainer<>(DockerImageName.parse("jaegertracing/all-in-one:1.51"))
             .withExposedPorts(16686, 4318)  // Query API and OTLP HTTP
             .withEnv("COLLECTOR_OTLP_ENABLED", "true");
 
+    @BeforeAll
+    public static void startContainer() {
+        jaeger.start();
+    }
+
     @DynamicPropertySource
     static void jaegerProperties(DynamicPropertyRegistry registry) {
         // Configure OTLP HTTP exporter endpoint
-        registry.add("management.otlp.tracing.endpoint",
+        registry.add("management.opentelemetry.tracing.export.otlp.endpoint",
                 () -> String.format("http://%s:%s/v1/traces", jaeger.getHost(), jaeger.getMappedPort(4318)));
         // Override Spring Boot test defaults that disable tracing
         registry.add("management.tracing.enabled", () -> "true");

@@ -1,7 +1,8 @@
 package io.eventuate.tram.spring.micrometer.tracing.test;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
@@ -24,7 +25,7 @@ public class JaegerSpanVerifier {
         this.jaegerQueryUrl = jaegerQueryUrl;
         this.serviceName = serviceName;
         this.restTemplate = restTemplate;
-        this.objectMapper = new ObjectMapper();
+        this.objectMapper = JsonMapper.builder().build();
     }
 
     public List<List<JaegerSpan>> getTraces() {

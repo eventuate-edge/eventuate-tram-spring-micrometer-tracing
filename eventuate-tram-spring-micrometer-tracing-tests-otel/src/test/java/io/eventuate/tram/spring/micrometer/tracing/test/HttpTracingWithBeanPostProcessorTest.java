@@ -3,6 +3,7 @@ package io.eventuate.tram.spring.micrometer.tracing.test;
 import io.eventuate.tram.consumer.common.MessageHandlerDecorator;
 import io.eventuate.tram.spring.inmemory.TramInMemoryConfiguration;
 import io.eventuate.util.test.async.Eventually;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,8 +22,6 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.web.client.RestTemplate;
 import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
 import java.util.List;
@@ -39,7 +38,6 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @SpringBootTest(classes = HttpTracingWithBeanPostProcessorTest.TestConfiguration.class,
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Testcontainers
 public class HttpTracingWithBeanPostProcessorTest {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
@@ -78,14 +76,18 @@ public class HttpTracingWithBeanPostProcessorTest {
     @Autowired
     private RestTemplate restTemplate;
 
-    @Container
     static final GenericContainer<?> jaeger = new GenericContainer<>(DockerImageName.parse("jaegertracing/all-in-one:1.51"))
             .withExposedPorts(16686, 4318)
             .withEnv("COLLECTOR_OTLP_ENABLED", "true");
 
+    @BeforeAll
+    public static void startContainer() {
+        jaeger.start();
+    }
+
     @DynamicPropertySource
     static void jaegerProperties(DynamicPropertyRegistry registry) {
-        registry.add("management.otlp.tracing.endpoint",
+        registry.add("management.opentelemetry.tracing.export.otlp.endpoint",
                 () -> String.format("http://%s:%s/v1/traces", jaeger.getHost(), jaeger.getMappedPort(4318)));
         registry.add("management.tracing.enabled", () -> "true");
         registry.add("management.tracing.propagation.type", () -> "W3C");

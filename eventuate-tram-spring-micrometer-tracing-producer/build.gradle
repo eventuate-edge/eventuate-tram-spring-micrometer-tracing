@@ -4,20 +4,23 @@ dependencies {
     api project(":eventuate-tram-spring-micrometer-tracing-common")
 
     compileOnly "io.micrometer:micrometer-tracing"
-    compileOnly "io.micrometer:micrometer-observation"
+    compileOnly "io.micrometer:micrometer-observation:$micrometerVersion"
     compileOnly "io.eventuate.tram.core:eventuate-tram-messaging"
-    compileOnly "org.springframework.boot:spring-boot-autoconfigure"
-    compileOnly "org.slf4j:slf4j-api"
+    compileOnly "org.springframework.boot:spring-boot-autoconfigure:$springBootVersion"
+    compileOnly "org.slf4j:slf4j-api:$slf4jVersion"
 
     testImplementation "io.micrometer:micrometer-tracing"
-    testImplementation "io.micrometer:micrometer-observation"
-    testImplementation("io.micrometer:micrometer-observation-test") {
+    testImplementation "io.micrometer:micrometer-observation:$micrometerVersion"
+    testImplementation("io.micrometer:micrometer-observation-test:$micrometerVersion") {
         exclude group: 'org.junit.platform'
         exclude group: 'org.junit.jupiter'
     }
     testImplementation "io.micrometer:micrometer-tracing-test"
     testImplementation "io.eventuate.tram.core:eventuate-tram-messaging"
-    testImplementation "org.mockito:mockito-core"
+    testImplementation "org.springframework.boot:spring-boot-autoconfigure:$springBootVersion"
+    testImplementation "org.mockito:mockito-core:$mockitoVersion"
+    testImplementation "org.assertj:assertj-core:$assertjVersion"
     testImplementation "org.junit.jupiter:junit-jupiter"
-    testImplementation "org.springframework.boot:spring-boot-starter-test"
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher"
+    testImplementation "org.springframework.boot:spring-boot-starter-test:$springBootVersion"
 }

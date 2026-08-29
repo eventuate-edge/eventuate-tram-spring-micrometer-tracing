@@ -10,8 +10,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
 
 @AutoConfiguration(afterName = {
-        "org.springframework.boot.actuate.autoconfigure.tracing.BraveAutoConfiguration",
-        "org.springframework.boot.actuate.autoconfigure.tracing.MicrometerTracingAutoConfiguration"
+        "org.springframework.boot.micrometer.tracing.brave.autoconfigure.BraveAutoConfiguration",
+        "org.springframework.boot.micrometer.tracing.opentelemetry.autoconfigure.OpenTelemetryTracingAutoConfiguration",
+        "org.springframework.boot.micrometer.tracing.autoconfigure.MicrometerTracingAutoConfiguration"
 })
 @ConditionalOnClass(ObservationRegistry.class)
 public class TramMicrometerTracingCommonAutoConfiguration {

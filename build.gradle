@@ -35,12 +35,9 @@ allprojects {
     if (!project.name.endsWith("-bom")) {
 
       dependencies {
-          implementation(platform("org.springframework.boot:spring-boot-dependencies:$springBootVersion"))
           implementation(platform("io.micrometer:micrometer-tracing-bom:$micrometerTracingVersion"))
           implementation(platform("io.eventuate.tram.core:eventuate-tram-bom:$eventuateTramVersion"))
-
-          testImplementation "org.springframework.boot:spring-boot-starter-test"
-
+          implementation(platform("org.junit:junit-bom:$junitVersion"))
       }
 
       test {
