@@ -70,4 +70,10 @@ gradle.projectsEvaluated {
     tasks.named('javadocJar') {
         dependsOn aggregateJavaDocs
     }
+
+    // Gradle 8.14 validates publication task dependencies strictly. The root
+    // publication consumes the aggregate javadoc artifact, so make ordering explicit.
+    tasks.named('generateMetadataFileForMavenPublication') {
+        dependsOn aggregateJavaDocsJar
+    }
 }
